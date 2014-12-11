@@ -72,7 +72,7 @@
 
 	<Target Name="Compile" DependsOnTargets="FixVcproj">
 		<!--Perform the build-->
-		<Exec Command='$(MSBuildEXE32) "$(SourceDir)\$(BuildSolutionFileName)" /v:n /tv:4.0 /t:Rebuild /m:3 /nr:false /p:PlatformToolset=Windows7.1SDK;Configuration="$(BuildConfig)";OutputPath="$(BuildFileDir)";Platform=$(Platform)'/>
+		<Exec Command='$(MSBuildEXE32) "$(SourceDir)\$(BuildSolutionFileName)" /v:n /tv:4.0 /t:Rebuild /m:3 /nr:false /p:PlatformToolset=$(PlatformToolset);Configuration="$(BuildConfig)";OutputPath="$(BuildFileDir)";Platform=$(Platform)'/>
 	</Target>
 
 	<Target Name="UpdateProductID">
