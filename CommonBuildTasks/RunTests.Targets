@@ -90,18 +90,14 @@ http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<!-- Include the task that does all the heavy lifting. -->
-	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.MSTestTask"            AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
-	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.SetEnvtTask"           AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
-	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.TransformXMLTask"      AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
-	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.VerifyTestsPassedTask" AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.MSTestTask"            AssemblyFile="$(RandRMsTaskDir)\RandREng.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.SetEnvtTask"           AssemblyFile="$(RandRMsTaskDir)\RandREng.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.TransformXMLTask"      AssemblyFile="$(RandRMsTaskDir)\RandREng.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.VerifyTestsPassedTask" AssemblyFile="$(RandRMsTaskDir)\RandREng.MsBuildTasks.dll"/>
 
 	<PropertyGroup>
-		<!-- Directories-->
-		<SourceDir Condition="'$(SourceDir)'==''">$(MSBuildProjectDirectory)\..</SourceDir>
-		<BuildDir Condition="'$(BuildDir)'==''">$(SourceDir)\Build</BuildDir>
-
 		<!-- Files -->
-		<TestResultsTransform  Condition="'$(TestResultsTransform)'==''">$(MSBuildProjectDirectory)\Common\testResultsTransform.xsl</TestResultsTransform>
+		<TestResultsTransform  Condition="'$(TestResultsTransform)'==''">$(MSBuildProjectDirectory)\..\..\Build Tools\CommonBuildTasks\testResultsTransform.xsl</TestResultsTransform>
 		<TestResultsOutput Condition="'$(TestResultsOutput)'==''">$(MSBuildProjectDirectory)\Results.trx</TestResultsOutput>
 	</PropertyGroup>
 
@@ -112,7 +108,7 @@ http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
 
 	<!-- The directory where to start recursing for the files. -->
 	<PropertyGroup Condition="'$(StartDirectory)' == ''">
-		<StartDirectory>$(BuildDir)\</StartDirectory>
+		<StartDirectory>$(BuildFileDir)\</StartDirectory>
 	</PropertyGroup>
 
 	<!-- Look up all the unit tests. -->
@@ -213,25 +209,31 @@ http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
 		<CreateProperty Value="$(UnitTestOutputDir)\">
 			<Output TaskParameter="Value" PropertyName="TestResultsFile" />
 		</CreateProperty>
-		
-		<MSTestTask Condition="'$(DebugProj)' == ''"
+
+    <!--Platform="$(Platform)"-->
+    <MSTestTask Condition="'$(DebugProj)' == ''"
 					TestContainers="@(TestContainers)"
 					ResultsFile="$(TestResultsFile)"
-					RunConfig="$(SourceDir)\localtestrun.testrunconfig"
+					RunConfig="$(SourceDir)\Local.testsettings"
 					Tests="@(Tests)"
 					NoIsolation="$(NoIsolation)"
 					Details="@(Details)"
 					Publish="$(Publish)"
-					UseTest2008="true"
+					UseTest2008="false"
 					PublishBuild="$(PublishBuild)"
 					PublishResultsFile="$(PublishResultsFile)"
 					TeamProject="$(TeamProject)"
-					Platform="$(Platform)"
 					Flavor="$(Flavor)"
                     >
 			<Output TaskParameter="FinalResultsFile" PropertyName="GeneratedTestResultsFile"> </Output>
 		</MSTestTask>
-		<TransformXMLTask XslTransform="$(TestResultsTransform)" Include="$(GeneratedTestResultsFile)" OutputExtension="html" OutputDir="$(BuildDir)\$(VersionNumber)\TestResults"></TransformXMLTask>
+
+    <Message Text="TestResultsTransform: $(TestResultsTransform)" />
+    <Message Text="GeneratedTestResultsFile: $(GeneratedTestResultsFile)" />
+    <Message Text="BuildDir: $(BuildDir)" />
+    <Message Text="VersionNumber: $(VersionNumber)" />
+
+    <TransformXMLTask XslTransform="$(TestResultsTransform)" Include="$(GeneratedTestResultsFile)" OutputExtension="html" OutputDir="$(BuildDir)\$(VersionNumber)\TestResults"></TransformXMLTask>
 		<VerifyTestsPassedTask TestResultsFile="$(GeneratedTestResultsFile)"></VerifyTestsPassedTask>
 		<SetEnvVarTask Variable="TestResultsFile" Value="$(GeneratedTestResultsFile)"/>
 		<Copy SourceFiles="$(GeneratedTestResultsFile)" DestinationFiles="$(TestResultsOutput)" />
