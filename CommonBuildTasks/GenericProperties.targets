@@ -7,7 +7,7 @@
 		<VersionNumber Condition="'$(VersionNumber)'==''">1.2.3.4</VersionNumber>
 
 		<!-- Machine Specific Tools -->
-    <WixDir Condition="'$(WixDir)'==''">C:\Program Files (x86)\Windows Installer XML v3.5\bin</WixDir>
+    <WixDir Condition="'$(WixDir)'==''">$(CommonProgramFiles(x86)\Windows Installer XML v3.5\bin</WixDir>
 		<MSBuildEXE32 Condition="'$(MSBuildEXE32)'==''">C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe</MSBuildEXE32>
     <SignTool Condition="'$(SignTool)'==''">&quot;$(CommonProgramFiles(x86))\Microsoft SDKs\Windows\v7.0A\Bin&quot;</SignTool>
     <RandRMsTaskDir Condition="'$(RandRTaskDir)'==''">$(BuildTools)</RandRMsTaskDir>
