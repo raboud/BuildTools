@@ -11,7 +11,7 @@
     <BuildTools Condition="'$(BuildTools)' == ''">c:\BuildTools</BuildTools>
     <WixDir Condition="'$(WixDir)'==''">$(ProgramFiles)\Windows Installer XML v3.5\bin</WixDir>
 		<MSBuildEXE32 Condition="'$(MSBuildEXE32)'==''">C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe</MSBuildEXE32>
-		<PlatformToolset Condition="'$(PlatformToolset)'==''">Windows7.1SDK</PlatformToolset>
+		<PlatformToolset Condition="'$(PlatformToolset)'==''">v120</PlatformToolset>
     <SignTool Condition="'$(SignTool)'==''">&quot;$(ProgramFiles)\Microsoft SDKs\Windows\v7.1\Bin\Netfx 4.0 Tools&quot;</SignTool>
     <RandRMsTaskDir Condition="'$(RandRTaskDir)'==''">$(BuildTools)</RandRMsTaskDir>
 		<SetupTool Condition="'$(SetupTool)'==''">$(BuildTools)\Setup.exe</SetupTool>
