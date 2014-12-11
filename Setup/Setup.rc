@@ -1,0 +1,155 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// FILES
+//
+
+IDR_FILES_PROPERTIES    FILES                   "properties.txt"
+IDR_FILES_MSI           FILES                   "TestApp.msi"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "R & R Engineering, LLC"
+            VALUE "FileDescription", "Setup Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "Setup"
+            VALUE "LegalCopyright", "Copyright (c) 2012 R & R Engineering, LLC"
+            VALUE "OriginalFilename", "Setup.exe"
+            VALUE "ProductName", " Setup Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_WINDOW_2003         "Windows 2003 Server Service Pack 1 or newer Windows Server Operating System"
+    IDS_WINDOW_XP           "Windows XP Service Pack 2 or newer Windows Operating System"
+    IDS_MDAC                "Microsoft Data Access Components (MDAC) v2.8"
+    IDS_FRAMEWORK2          "Microsoft .NET Framework 2.0 or higher"
+    IDS_IE6                 "Microsoft Internet Explorer v6.0 or higher"
+    IDS_IIS                 "Microsoft Internet Information Services v6 or higher"
+    IDS_ASPNET              "ASP.NET v2.0 or higher"
+    IDS_ASPNET_ENABLED      "ASP.NET v2.0.50727 must be allowed to run dynamic content in Internet Information Services (IIS) Manager."
+    IDS_SQL_EXPRESS         "Microsoft SQL Server Express Service Pack 1 with default “SQLEXPRESS” instance name"
+    IDS_PREREQUISITIES      "Setup has determined that your Operating System lacks the following required components:\r\n\r\n%s\r\n\r\nPlease install and/or enable required components and perform a Microsoft Windows Update before re-running the setup.\r\n\r\n"
+    IDS_UPGRAGE_MSG         "Setup has detected a previous installation of %s.\r\n\r\nThe current installed version is %s.\r\nThe version to be installed is %s.\r\n\r\nSetup can only uninstall the previous version and reinstall this version.  Would you like to proceed?"
+    IDS_MSG_SETUP_CANCELED  "Setup cannot continue because the installation was cancelled."
+    IDS_MSG_UNINSTALL_FAILED 
+                            "Setup cannot continue because the uninstall of %s returned error code %d."
+    IDS_SETUP               "Setup"
+    IDS_SETUP_PRODUCT       "%s Setup"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ERROR_LOADING_PROPS "The following error occurred loading installation properties.  %s"
+    IDS_ERROR_PRODUCT_INFO  "The following error occurred checking for a product upgrade.  %s"
+    IDS_ERROR_COMMON_APPDATA 
+                            "The following error occurred retrieving common application data folder.  %s"
+    IDS_ERROR_CREATE_DIR    "The following error occurred creating directory %s.  %s"
+    IDS_ERROR_EXTRACT_MSI   "The following error occurred extracting installation package.  %s (%s)"
+    IDS_ERROR_CODE          "Error code %d."
+    IDS_ERROR_ADMIN         "You must have administrative rights to install this product."
+    IDS_ERROR_REBOOT        "Setup cannot continue until the machine is restarted.  Would you like to reboot now?"
+    IDS_MSG_REBOOT          "Setup recommends that you reboot to complete the installation.  Would you like to reboot now?"
+    IDS_MSG_LOGOUT          "Setup recommends that you logout to complete the installation.  Would you like to logout now?"
+    IDS_OSPREREQUISITIES    "Setup cannot continue because this product requires %s.\r\n\r\n"
+    IDS_IIS6_MNGR_COMP      "IIS 6 Management Compatibility"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
