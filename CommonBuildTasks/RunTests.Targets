@@ -98,7 +98,7 @@ http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
 	<PropertyGroup>
 		<!-- Files -->
 		<TestResultsTransform  Condition="'$(TestResultsTransform)'==''">$(MSBuildProjectDirectory)\..\..\Build Tools\CommonBuildTasks\testResultsTransform.xsl</TestResultsTransform>
-		<TestResultsOutput Condition="'$(TestResultsOutput)'==''">$(MSBuildProjectDirectory)\MStest_UnitTestResults.xml</TestResultsOutput>
+		<TestResultsOutput Condition="'$(TestResultsOutput)'==''">$(MSBuildProjectDirectory)\..\..\MStest_UnitTestResults.xml</TestResultsOutput>
 	</PropertyGroup>
 
 	<!-- The property to set for your unit test naming scheme. -->
