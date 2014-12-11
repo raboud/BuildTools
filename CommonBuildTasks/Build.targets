@@ -19,7 +19,7 @@
     <DotfuscatedDir Condition="'$(DotfuscatedDir)'==''">$(OutputDir)\Dotfuscated</DotfuscatedDir>
 
     <BuildConfig Condition="'$(BuildConfig)'==''">Release</BuildConfig>
-    <Platform Condition="'$(Patform)'==''">"x86"</Platform>
+    <Platform Condition="'$(Patform)'==''">"Any CPU"</Platform>
 
     <!-- Files -->
 		<SetupPropertiesFile Condition="'$(SetupPropertiesFile)'==''">$(MSBuildProjectDirectory)\properties.xml</SetupPropertiesFile>
