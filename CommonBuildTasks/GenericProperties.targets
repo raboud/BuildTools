@@ -10,7 +10,7 @@
 		<!-- Machine Specific Tools -->
     <BuildTools Condition="'$(BuildTools)' == ''">c:\BuildTools</BuildTools>
     <WixDir Condition="'$(WixDir)'==''">$(ProgramFiles)\Windows Installer XML v3.5\bin</WixDir>
-		<MSBuildEXE32 Condition="'$(MSBuildEXE32)'==''">&quot;C:\Program Files\MSBuild\12.0\bin\msbuild.exe&quot;</MSBuildEXE32>
+		<MSBuildEXE32 Condition="'$(MSBuildEXE32)'==''">&quot;%ProgramFiles(x86)%\MSBuild\12.0\bin\msbuild.exe&quot;</MSBuildEXE32>
 		<PlatformToolset Condition="'$(PlatformToolset)'==''">v120</PlatformToolset>
     <SignTool Condition="'$(SignTool)'==''">&quot;$(ProgramFiles)\Microsoft SDKs\Windows\v7.1\Bin\Netfx 4.0 Tools&quot;</SignTool>
     <RandRMsTaskDir Condition="'$(RandRTaskDir)'==''">$(BuildTools)</RandRMsTaskDir>
