@@ -69,8 +69,17 @@
     <Reference Include="ThoughtWorks.CruiseControl.Core, Version=1.1.0.2527, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ThoughtWorks.CruiseControl.Remote, Version=1.8.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalAssemblies\ThoughtWorks.CruiseControl.Remote.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdvancedInstaller.cs" />
+    <Compile Include="AdvancedInstallerCCNETException.cs" />
+    <Compile Include="AdvancedInstallerException.cs" />
+    <Compile Include="AdvancedInstallerResult.cs" />
+    <Compile Include="AdvancedInstallerTask.cs" />
     <Compile Include="DateVersionLabeller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
