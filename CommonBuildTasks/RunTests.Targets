@@ -1,0 +1,239 @@
+﻿<!-- 
+   Bugslayer Column - MSDN Magazine - John Robbins - john@wintellect.com
+
+Looks through your soure code directories looking for runnable tests and 
+executes them automatically with MSTEST.EXE.  As manual tests can't be run with
+MSTEST.EXE, this target will not look for them.  If you want to run those tests, 
+you may want to pop a message box with instructions on what to execute.  
+
+The main task is in Bugslayer.Build.Tasks.DLL so define the 
+BUGSLAYERBUILDTASKSDIR environment variable to specify the directory where that
+assembly lives.
+
+See the  following comments on exactly on how to use this target.
+
+    <PropertyGroup>
+        ** The naming convention for your unit tests.  The default is 
+        ** "*.Tests.DLL" so add your own with this property.
+        <UnitTestNamingConvention></UnitTestNamingConvention>
+        ** The directory to start recursing looking for test containers.  If not
+        ** specified, defaults to ".\", the current directory.
+        <StartDirectory></StartDirectory>
+    </PropertyGroup>
+    
+    ** Add additional directory wildcards to exclude from the searches.  You'll
+    ** need to specify the exact matching here.  For example, if you want to 
+    ** exclude the smoke test directory you would specify the following for each
+    ** directory.
+    ** $(StartDirectory)**\SmokeTest\**\
+    <PropertyGroup>
+        <AdditionalExcludeDirectory1></AdditionalExcludeDirectory1>
+        <AdditionalExcludeDirectory2></AdditionalExcludeDirectory2>
+        <AdditionalExcludeDirectory3></AdditionalExcludeDirectory3>
+        <AdditionalExcludeDirectory4></AdditionalExcludeDirectory4>
+        <AdditionalExcludeDirectory5></AdditionalExcludeDirectory5>
+    </PropertyGroup>
+    
+    ** Note that the test container rules are smart enough to skip those tests
+    ** appearing in *\obj\* and *\TestResults\* directories.  See the Exclude=
+    ** options below.
+    <PropertyGroup>
+        ** If set to any value, skips all unit tests matching the pattern in 
+        ** $(UnitTestNamingConvention)
+        <SkipUnitTests></SkipUnitTests>
+        ** If set to any value, skips all *.GenericTest files.
+        <SkipGenericTests></SkipGenericTests>
+        ** If set to any value, skips all *.WebTest files.
+        <SkipWebTests></SkipWebTests>
+        ** If set to any value, skips all *.OrderedTest files.
+        <SkipOrderedTests></SkipOrderedTests>
+    </PropertyGroup>
+
+    ** These properties all apply to the MSTestTask from Bugslayer.Build.Tasks.
+    <PropertyGroup>
+        ** The required name for /resultfile:
+        <ResultsFile></ResultsFile>
+        ** The optional value for /runconfig:
+        <RunConfig></RunConfig>
+        ** The boolean optional value for /noisolation
+        <NoIsolation></NoIsolation>
+        ** The optional value for /publish:
+        <Publish></Publish>
+        ** The optional value for /publishbuild:
+        <PublishBuild></PublishBuild>
+        ** The optional value for /publishresultsfile:
+        <PublishResultsFile></PublishResultsFile>
+        ** The optional value for /teamproject:
+        <TeamProject></TeamProject>
+        ** The optional value for /platform:
+        <Platform></Platform>
+        ** The optional value for /flavor:
+        <Flavor></Flavor>
+    </PropertyGroup>
+
+    ** Include ONLY if you want to specify values to /test:
+    <ItemGroup>
+        <Tests Include=""/>
+    </ItemGroup>
+
+    ** Include ONLY if you want to specify values to /detail:
+    <ItemGroup>
+        <Details Include=""/>
+    </ItemGroup>
+    
+   <Import Project="RunTests.Targets"/>
+   
+The original article about this tool can be found at:
+http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<!-- Include the task that does all the heavy lifting. -->
+	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.MSTestTask"            AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.SetEnvtTask"           AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.TransformXMLTask"      AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.SEN.MsBuildTasks.VerifyTestsPassedTask" AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+
+	<PropertyGroup>
+		<!-- Directories-->
+		<SourceDir Condition="'$(SourceDir)'==''">$(MSBuildProjectDirectory)\..</SourceDir>
+		<BuildDir Condition="'$(BuildDir)'==''">$(SourceDir)\Build</BuildDir>
+
+		<!-- Files -->
+		<TestResultsTransform  Condition="'$(TestResultsTransform)'==''">$(MSBuildProjectDirectory)\Common\testResultsTransform.xsl</TestResultsTransform>
+		<TestResultsOutput Condition="'$(TestResultsOutput)'==''">$(MSBuildProjectDirectory)\Results.trx</TestResultsOutput>
+	</PropertyGroup>
+
+	<!-- The property to set for your unit test naming scheme. -->
+	<PropertyGroup Condition="'$(UnitTestNamingConvention)' == ''">
+		<UnitTestNamingConvention>*.UnitTest.DLL</UnitTestNamingConvention>
+	</PropertyGroup>
+
+	<!-- The directory where to start recursing for the files. -->
+	<PropertyGroup Condition="'$(StartDirectory)' == ''">
+		<StartDirectory>$(BuildDir)\</StartDirectory>
+	</PropertyGroup>
+
+	<!-- Look up all the unit tests. -->
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory1)' != '' ">
+		<MoreUnitTestExcludes Include="$(AdditionalExcludeDirectory1)\$(UnitTestNamingConvention)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory2)' != '' ">
+		<MoreUnitTestExcludes Include="$(AdditionalExcludeDirectory2)\$(UnitTestNamingConvention)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory3)' != '' ">
+		<MoreUnitTestExcludes Include="$(AdditionalExcludeDirectory3)\$(UnitTestNamingConvention)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory4)' != '' ">
+		<MoreUnitTestExcludes Include="$(AdditionalExcludeDirectory4)\$(UnitTestNamingConvention)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory5)' != '' ">
+		<MoreUnitTestExcludes Include="$(AdditionalExcludeDirectory5)\$(UnitTestNamingConvention)"/>
+	</ItemGroup>
+
+	<ItemGroup Condition ="'$(SkipUnitTests)' == ''">
+		<!-- Add the unit tests. -->
+		<UnitTestContainers Include="$(StartDirectory)**\$(UnitTestNamingConvention)"
+                            Exclude="$(StartDirectory)**\obj\**\$(UnitTestNamingConvention);$(StartDirectory)**\TestResults\**\$(UnitTestNamingConvention);@(MoreUnitTestExcludes)"/>
+	</ItemGroup>
+
+	<!-- Look up all the *.GenericTest. -->
+	<PropertyGroup Condition ="'$(GenericTestWildCard)' == ''">
+		<GenericTestWildCard>*.GenericTest</GenericTestWildCard>
+	</PropertyGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory1)' != '' ">
+		<MoreGenericTestExcludes Include="$(AdditionalExcludeDirectory1)\$(GenericTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory2)' != '' ">
+		<MoreGenericTestExcludes Include="$(AdditionalExcludeDirectory2)\$(GenericTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory3)' != '' ">
+		<MoreGenericTestExcludes Include="$(AdditionalExcludeDirectory3)\$(GenericTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory4)' != '' ">
+		<MoreGenericTestExcludes Include="$(AdditionalExcludeDirectory4)\$(GenericTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory5)' != '' ">
+		<MoreGenericTestExcludes Include="$(AdditionalExcludeDirectory5)\$(GenericTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(SkipGenericTests)' == ''" >
+		<!-- Add the generic tests.-->
+		<GenericTestContainers Include="$(StartDirectory)**\$(GenericTestWildCard)"
+                               Exclude="$(StartDirectory)**\obj\**\$(GenericTestWildCard);$(StartDirectory)**\TestResults\**\$(GenericTestWildCard);@(MoreGenericTestExcludes)"/>
+	</ItemGroup>
+
+	<!-- Look up all the *.OrderedTest. -->
+	<PropertyGroup Condition ="'$(OrderedTestWildCard)' == ''">
+		<OrderedTestWildCard>*.OrderedTest</OrderedTestWildCard>
+	</PropertyGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory1)' != '' ">
+		<MoreOrderedTestExcludes Include="$(AdditionalExcludeDirectory1)\$(OrderedTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory2)' != '' ">
+		<MoreOrderedTestExcludes Include="$(AdditionalExcludeDirectory2)\$(OrderedTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory3)' != '' ">
+		<MoreOrderedTestExcludes Include="$(AdditionalExcludeDirectory3)\$(OrderedTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory4)' != '' ">
+		<MoreOrderedTestExcludes Include="$(AdditionalExcludeDirectory4)\$(OrderedTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(AdditionalExcludeDirectory5)' != '' ">
+		<MoreOrderedTestExcludes Include="$(AdditionalExcludeDirectory5)\$(OrderedTestWildCard)"/>
+	</ItemGroup>
+	<ItemGroup Condition ="'$(SkipOrderedTests)' == ''" >
+		<!-- Add the web tests.-->
+		<OrderedTestContainers Include="$(StartDirectory)**\$(OrderedTestWildCard)"
+                               Exclude="$(StartDirectory)**\obj\**\$(OrderedTestWildCard);$(StartDirectory)**\TestResults\**\$(OrderedTestWildCard);@(MoreOrderedTestExcludes)"/>
+	</ItemGroup>
+
+	<!-- Build up the list of all tests.-->
+	<ItemGroup>
+		<TestContainers Include="@(UnitTestContainers)"/>
+		<TestContainers Include="@(GenericTestContainers)"/>
+		<TestContainers Include="@(OrderedTestContainers)"/>
+	</ItemGroup>
+
+	<!-- Let the task have at it. -->
+
+	<Target Name="BuildUnitTestList">
+		<CreateItem Include="$(StartDirectory)\**\TestResults\**\$(UnitTestNamingConvention)">
+			<Output TaskParameter="Include" ItemName="Xclude"/>
+		</CreateItem>
+		<CreateItem Include="$(StartDirectory)$(UnitTestNamingConvention)" Exclude="@(Xclude)" >
+			<Output TaskParameter="Include" ItemName="TestContainers"/>
+		</CreateItem>
+	</Target>
+
+	<Target Name="ExecuteAllTests" DependsOnTargets="BuildUnitTestList" Condition="'$(SkipUnitTest)'!='1'">
+		<CreateProperty Value="$(BuildDir)\$(VersionNumber)\TestResults">
+			<Output TaskParameter="Value" PropertyName="UnitTestOutputDir" />
+		</CreateProperty>
+		<CreateProperty Value="$(UnitTestOutputDir)\">
+			<Output TaskParameter="Value" PropertyName="TestResultsFile" />
+		</CreateProperty>
+		
+		<MSTestTask Condition="'$(DebugProj)' == ''"
+					TestContainers="@(TestContainers)"
+					ResultsFile="$(TestResultsFile)"
+					RunConfig="$(SourceDir)\localtestrun.testrunconfig"
+					Tests="@(Tests)"
+					NoIsolation="$(NoIsolation)"
+					Details="@(Details)"
+					Publish="$(Publish)"
+					UseTest2008="true"
+					PublishBuild="$(PublishBuild)"
+					PublishResultsFile="$(PublishResultsFile)"
+					TeamProject="$(TeamProject)"
+					Platform="$(Platform)"
+					Flavor="$(Flavor)"
+                    >
+			<Output TaskParameter="FinalResultsFile" PropertyName="GeneratedTestResultsFile"> </Output>
+		</MSTestTask>
+		<TransformXMLTask XslTransform="$(TestResultsTransform)" Include="$(GeneratedTestResultsFile)" OutputExtension="html" OutputDir="$(BuildDir)\$(VersionNumber)\TestResults"></TransformXMLTask>
+		<VerifyTestsPassedTask TestResultsFile="$(GeneratedTestResultsFile)"></VerifyTestsPassedTask>
+		<SetEnvVarTask Variable="TestResultsFile" Value="$(GeneratedTestResultsFile)"/>
+		<Copy SourceFiles="$(GeneratedTestResultsFile)" DestinationFiles="$(TestResultsOutput)" />
+	</Target>
+</Project>

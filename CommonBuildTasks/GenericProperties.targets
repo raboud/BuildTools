@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+	<PropertyGroup>
+		<!-- Generic Properties -->
+		<CopyrightText Condition="'$(CopyrightText)'==''">Copyright (c) 2012 R & R Engineering, LLC Norcross, GA 30093</CopyrightText>
+		<VersionNumber Condition="'$(VersionNumber)'==''">3.0.0.0</VersionNumber>
+
+		<!-- Machine Specific Tools -->
+		<WixDir Condition="'$(WixDir)'==''">C:\Program Files\Windows Installer XML v3\bin</WixDir>
+		<MSBuildEXE32 Condition="'$(MSBuildEXE32)'==''">C:\Windows\Microsoft.NET\Framework\v3.5\msbuild.exe</MSBuildEXE32>
+		<SignTool Condition="'$(SignTool)'==''">&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\signtool.exe&quot;</SignTool>
+		<ManifesTool Condition="'$(ManifesTool)'==''">&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\mt.exe&quot;</ManifesTool>
+		<GtriMsTaskDir Condition="'$(RandRTaskDir)'==''">$(MSBuildProjectDirectory)\Common\BuildTools</GtriMsTaskDir>
+		<SetupTool Condition="'$(SetupTool)'==''">$(MSBuildProjectDirectory)\Common\BuildTools\Setup.exe</SetupTool>
+		<SetupBuilderTool Condition="'$(SetupBuilderTool)'==''">&quot;$(MSBuildProjectDirectory)\Common\BuildTools\SetupBuild.exe&quot;</SetupBuilderTool>
+		<Dotfuscator Condition="'$(Dotfuscator)'==''">&quot;C:\Program Files\PreEmptive Solutions\Dotfuscator Professional Edition 3.0\dotfuscator.exe&quot;</Dotfuscator>
+		<AppMap Condition="'$(AppMap)'==''">&quot;C:\Program Files\Microsoft Product Feedback Mapping Tool\AppMap.exe&quot;</AppMap>
+	</PropertyGroup>
+
+</Project>
+

@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+	<UsingTask TaskName="RandREng.MsBuildTasks.VersionTask"          AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.RegexTask"            AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.ReplaceTask"          AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.XmlReplaceTask"       AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.SetEnvVarTask"        AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.EnumerateSubDirsTask" AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+	<UsingTask TaskName="RandREng.MsBuildTasks.Version2Task"         AssemblyFile="$(RandRMsTaskDir)\RandREng.SEN.MsBuildTasks.dll"/>
+
+	<PropertyGroup>
+		<!-- Directories-->
+		<SourceDir Condition="'$(SourceDir)'==''">$(MSBuildProjectDirectory)\..</SourceDir>
+		<InstallDir Condition="'$(InstallDir)'==''">$(SourceDir)\Install</InstallDir>
+		<BuildDir Condition="'$(BuildDir)'==''">$(SourceDir)\Build</BuildDir>
+		<DotfuscatedDir Condition="'$(DotfuscatedDir)'==''">$(BuildDir)\Dotfuscated</DotfuscatedDir>
+		<WixSourceDir Condition="'$(WixSourceDir)'==''">$(SourceDir)\Wix</WixSourceDir>
+    <BuildConfig Condition="'$(BuildConfig)'==''">Final Release</BuildConfig>
+		
+		<!-- Files -->
+		<SetupPropertiesFile Condition="'$(SetupPropertiesFile)'==''">$(MSBuildProjectDirectory)\properties.xml</SetupPropertiesFile>
+	</PropertyGroup>
+
+	<Target Name="BuildCommonVersionNumbers">
+		<!--Extract our version number from the label-->
+		<RegexTask Pattern="\d+.\d+.\d+.\d+" Input="$(CCNetLabel)">
+			<Output TaskParameter="Capture" PropertyName="VersionNumber" />
+		</RegexTask>
+
+    <RegexTask Pattern="\d+.\d+.\d+" Input="$(VersionNumber)">
+      <Output TaskParameter="Capture" PropertyName="ProductVersionNumber" />
+    </RegexTask>
+
+		<RegexTask Pattern="\d+.\d+" Input="$(VersionNumber)">
+			<Output TaskParameter="Capture" PropertyName="ShortVersionNumber" />
+		</RegexTask>
+
+		<RegexTask Pattern="\d+.\d+.(?&lt;RevBuild&gt;\d+.\d+)" MatchGroup="RevBuild" Input="$(VersionNumber)">
+			<Output TaskParameter="Capture" PropertyName="RevBldVer" />
+		</RegexTask>
+ 
+	</Target>
+
+  <Target Name="FixWixProdcutVersionNumber" DependsOnTargets="BuildCommonVersionNumbers">
+    <XMLReplaceTask Path="$(WixSourceDir)\install.wxs" XPath="/wxs:Wix/wxs:Product" Attribute="Version" XmlNs="wxs,http://schemas.microsoft.com/wix/2006/wi" Replace="$(ProductVersionNumber)"/>
+  </Target>
+
+	<Target Name="BuildVCProjList" >
+		<CreateItem Include="$(SourceDir)\**\*.vcproj" >
+			<Output TaskParameter="Include" ItemName="VCProjList"/>
+		</CreateItem>
+	</Target>
+
+	<Target Name="FixVcproj" DependsOnTargets="BuildVCProjList">
+		<Message Text="Output Directory: $(BuildDir)" />
+		<Message Text="VCProj Files:" />
+		<Message Text="   %22%(VCProjList.Identity)%22" />
+
+		<XmlReplaceTask Path="%(VCProjList.Identity)" XPath="/VisualStudioProject/Configurations/Configuration" Attribute="OutputDirectory" Replace="$(BuildDir)" />
+	</Target>
+
+	<Target Name="Compile" DependsOnTargets="FixVcproj">
+		<!--Perform the build-->
+		<Exec Command='$(MSBuildEXE32) "$(SourceDir)\$(BuildSolutionFileName)" /t:Rebuild /m:3 /nr:false /p:Configuration="$(BuildConfig)";OutputPath="$(BuildDir)";Platform="Any CPU"'/>
+	</Target>
+
+	<Target Name="UpdateProductID">
+		<RegexTask Pattern='&lt;\?define\s+ProductID\s*=\s*(?&lt;guid&gt;.*)\?&gt;' FileName="$(InstallDir)\MLV_en-us.wxi" BackRefName="guid">
+			<Output TaskParameter="Capture" PropertyName="ProdID" />
+		</RegexTask>
+	</Target>
+
+	<Target Name="Obfuscate" Condition="'$(SkipObfuscation)'!='1'">
+		<Exec Command="$(Dotfuscator) /p=configdir=$(BuildDir) $(InstallDir)\dot.xml" WorkingDirectory="$(InstallDir)"/>
+	</Target>
+
+	<Target Name="SetupEnvironmentVariables">
+		<!--Create a $(BuildDir) environment variable so our wxs install source can access it.-->
+		<SetEnvVarTask Variable="BuildDir" Value="$(BuildDir)"/>
+	</Target>
+
+	<Target Name="BuildMSI" DependsOnTargets="SetupEnvironmentVariables">
+		<Message Text='"$(SourceDir)"' />
+		<Message Text='"$(WixSourceDir)"' />
+		<Exec Condition="'$(SkipEnglish)'!='1'" Command='"$(WixDir)\candle.exe" "$(WixSourceDir)\Install.wxs" -dPRODUCT_VERSION=$(VersionNumber)' WorkingDirectory="$(WixSourceDir)"/>
+		<Exec Condition="'$(SkipEnglish)'!='1'" Command='"$(WixDir)\light.exe" "$(WixSourceDir)\Install.wixobj" -out "$(BuildDir)\$(ProductFileName).msi" -sice:ICE82 -sice:ICE83 -sice:ICE03' WorkingDirectory="$(WixSourceDir)"/>
+	</Target>
+
+	<Target Name="BuildProductMSI" DependsOnTargets="BuildVersionNumbers;SetupEnvironmentVariables;BuildMSI">
+		<!-- Grab the short version (Major.Minor)-->
+
+		<!--Sign WebInpect MSI-->
+		<Exec Condition="'$(SkipSigning)'!='1' and '$(SkipEnglish)'!='1'" Command='$(SignTool) sign /sha1 $(Certificate) /t http://timestamp.verisign.com/scripts/timstamp.dll "$(InstallDir)\$(ProductFileName).msi"' />
+		<Exec Condition="'$(SkipSigning)'!='1' and '$(SkipJapanese)'!='1'" Command='$(SignTool) sign /sha1 $(Certificate) /t http://timestamp.verisign.com/scripts/timstamp.dll "$(InstallDir)\$(ProductFileName)_ja-jp.msi"' />
+	</Target>
+
+	<!---***********************************************BEGIN MSI PACKAGING TARGETS*******************************************************-->
+	<Target Name="BuildFilesToSign" Condition="'$(SkipSigning)'!='1'" >
+		<CreateItem Include="$(DotfuscatedDir)\*.exe" >
+			<Output TaskParameter="Include" ItemName="FileToSign"/>
+		</CreateItem>
+		<CreateItem Include="$(DotfuscatedDir)\*.dll" >
+			<Output TaskParameter="Include" ItemName="FileToSign"/>
+		</CreateItem>
+		<CreateItem Include="$(BuildDir)\*.XmlSerializers.dll" >
+			<Output TaskParameter="Include" ItemName="FileToSign"/>
+		</CreateItem>
+		<!--Signing this interop file because we auto generated it.-->
+		<CreateItem Include="$(BuildDir)\Interop.*.dll" >
+			<Output TaskParameter="Include" ItemName="FileToSign"/>
+		</CreateItem>
+		<CreateItem Include="$(BuildDir)\ScriptDriver.dll" >
+			<Output TaskParameter="Include" ItemName="FileToSign"/>
+		</CreateItem>
+	</Target>
+
+	<Target Name="SignCode" DependsOnTargets="BuildFilesToSign" Condition="'$(SkipSigning)'!='1'">
+		<SignFile CertificateThumbprint="$(Certificate)" SigningTarget="%(FileToSign.Identity)" TimestampUrl="http://timestamp.verisign.com/scripts/timstamp.dll"/>
+	</Target>
+
+	<Target Name="BuildFilesToAddManifest" >
+		<CreateItem Include="$(BuildDir)\*.exe" >
+			<Output TaskParameter="Include" ItemName="FilesToAddManifes"/>
+		</CreateItem>
+	</Target>
+
+	<Target Name="AddManifest" DependsOnTargets="BuildFilesToAddManifest">
+		<Exec Command='$(ManifesTool) -manifest "$(InstallDir)\app.manifest" -outputresource:"%(FilesToAddManifes.Identity)";#1' />
+	</Target>
+
+	<Target Name="PackageInternal" DependsOnTargets="BuildVersionNumbers" >
+		<Message Text="SourceDir = $(SourceDir)" />
+		<XmlReplaceTask Path="$(SetupPropertiesFile)" XPath="/Setup/Product" Replace="$(ProductName) $(ShortVersionNumber)" />
+		<Copy SourceFiles="$(SetupTool)" DestinationFiles="$(BuildDir)\$(ProductFileName).exe" />
+		<Exec Condition="'$(SkipEnglish)'!='1'" Command='$(SetupBuilderTool)' WorkingDirectory='$(MSBuildProjectDirectory)'/>
+		
+		<!--Sign Product EXE-->
+		<SignFile Condition="'$(SkipEnglish)'!='1' and '$(SkipSigning)'!='1'" CertificateThumbprint="$(Certificate)" SigningTarget="$(InstallDir)\$(ProductFileName).exe" TimestampUrl="http://timestamp.verisign.com/scripts/timstamp.dll"/>
+	</Target>
+
+	<Target Name="CopyPackage" DependsOnTargets="PackageInternal">
+		<!--Copy Setup programs to output locations-->
+		<MakeDir Directories="$(OutputDir)\$(VersionNumber)"></MakeDir>
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(BuildDir)\$(ProductFileName).msi" DestinationFiles="$(OutputDir)\$(VersionNumber)\$(ProductFileName).msi"/>
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(BuildDir)\$(ProductFileName).exe" DestinationFiles="$(OutputDir)\$(VersionNumber)\$(ProductFileName).exe"/>
+
+		<Copy Condition="'$(SkipObfuscation)'!='1'" SourceFiles="$(DotfuscatedDir)\map.xml" DestinationFiles="$(OutputDir)\$(VersionNumber)\map.xml"/>
+		<Copy Condition="'$(SkipObfuscation)'!='1'" SourceFiles="$(InstallDir)\WinErrorMap.xml" DestinationFiles="$(OutputDir)\$(VersionNumber)\WinErrorMap.xml"/>
+	</Target>
+
+	<Target Name="CleanUpTests" Condition="'$(UnitTestOutputDir)'!='' and '$(SkipUnitTest)'!='1'" >
+		<Message Text ="Unit Test Output Dir = $(UnitTestOutputDir)"/>
+		<EnumerateSubDirsTask RootPath="$(UnitTestOutputDir)">
+			<Output TaskParameter="SubDirectories" ItemName="subDirs"/>
+		</EnumerateSubDirsTask >
+		<Message Condition="'$(DebugProj)'=='true'" Text="subDirs=@(subDirs)"/>
+		<RemoveDir Condition="'$(DebugProj)' == ''" Directories="@(subDirs)"/>
+	</Target>
+
+	<Target Name="CopyToMostRecent" DependsOnTargets="CopyPackage" >
+		<Message Text="UnitTestOutputDir=$(UnitTestOutputDir)"/>
+		<CreateItem Include="$(UnitTestOutputDir)\*.trx;$(UnitTestOutputDir)\*.html">
+			<Output TaskParameter="Include" ItemName="UnitTestResultsFileList"/>
+		</CreateItem>
+		<Message Text="UnitTestsResultsFileList=@(UnitTestResultsFileList)"/>
+
+		<RemoveDir Condition="'$(DebugProj)' == ''" Directories="$(OutputDir)\MostRecent\Unit Test Results" ContinueOnError="true"/>
+		<Copy DestinationFolder="$(OutputDir)\MostRecent\Unit Test Results"  SourceFiles="@(UnitTestResultsFileList)"/>
+
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(BuildDir)\$(ProductFileName).msi" DestinationFiles="$(OutputDir)\MostRecent\$(ProductFileName).msi" />
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(BuildDir)\$(ProductFileName).exe" DestinationFiles="$(OutputDir)\MostRecent\$(ProductFileName).exe" />
+
+	</Target>
+</Project>
+
