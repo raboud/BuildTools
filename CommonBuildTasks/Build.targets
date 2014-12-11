@@ -95,6 +95,7 @@
   <Target Name="BuildMSI" DependsOnTargets="SetupEnvironmentVariables">
 		<Message Text='"$(SourceDir)"' />
 		<Message Text='"$(WixSourceDir)"' />
+    <Message Text='"$(OutputDir)"' />
 		<Exec Condition="'$(SkipEnglish)'!='1'" Command='"$(WixDir)\candle.exe" "$(WixSourceDir)\Install.wxs" -dPRODUCT_VERSION=$(VersionNumber)' WorkingDirectory="$(OutputDir)"/>
     <Exec Condition="'$(SkipEnglish)'!='1'" Command='"$(WixDir)\light.exe" "$(OutputDir)\Install.wixobj" -ext "$(WixDir)\WixUIExtension.dll" -ext "$(WixDir)\WixNetfxExtension.dll" -out "$(OutputDir)\$(ProductFileName).msi"'/>
 	</Target>
