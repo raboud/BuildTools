@@ -143,17 +143,7 @@
 		<Exec Command='$(ManifesTool) -manifest "$(InstallDir)\app.manifest" -outputresource:"%(FilesToAddManifes.Identity)";#1' />
 	</Target>
 
-	<Target Name="PackageInternal" DependsOnTargets="BuildVersionNumbers" >
-		<Message Text="SourceDir = $(SourceDir)" />
-		<XmlReplaceTask Path="$(SetupPropertiesFile)" XPath="/Setup/Product" Replace="$(ProductName) $(ShortVersionNumber)" />
-		<Copy SourceFiles="$(SetupTool)" DestinationFiles="$(OutputDir)\$(ProductFileName).exe" />
-		<Exec Condition="'$(SkipEnglish)'!='1'" Command='$(SetupBuilderTool)' WorkingDirectory='$(MSBuildProjectDirectory)'/>
-		
-		<!--Sign Product EXE-->
-		<SignFile Condition="'$(SkipEnglish)'!='1' and '$(SkipSigning)'!='1'" CertificateThumbprint="$(Certificate)" SigningTarget="$(InstallDir)\$(ProductFileName).exe" TimestampUrl="http://timestamp.verisign.com/scripts/timstamp.dll"/>
-	</Target>
-
-	<Target Name="CopyPackage" DependsOnTargets="PackageInternal">
+	<Target Name="CopyPackage" DependsOnTargets="Package">
 		<!--Copy Setup programs to output locations-->
 		<MakeDir Directories="$(OutputDir)\$(VersionNumber)"></MakeDir>
 		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).msi" DestinationFiles="$(DestinationDir)\$(VersionNumber)\$(ProductFileName).msi"/>
