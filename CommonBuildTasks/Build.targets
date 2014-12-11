@@ -156,11 +156,11 @@
 	<Target Name="CopyPackage" DependsOnTargets="PackageInternal">
 		<!--Copy Setup programs to output locations-->
 		<MakeDir Directories="$(OutputDir)\$(VersionNumber)"></MakeDir>
-		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).msi" DestinationFiles="$(OutputDir)\$(VersionNumber)\$(ProductFileName).msi"/>
-		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).exe" DestinationFiles="$(OutputDir)\$(VersionNumber)\$(ProductFileName).exe"/>
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).msi" DestinationFiles="$(DestinationDir)\$(VersionNumber)\$(ProductFileName).msi"/>
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).exe" DestinationFiles="$(DestinationDir)\$(VersionNumber)\$(ProductFileName).exe"/>
 
-		<Copy Condition="'$(SkipObfuscation)'!='1'" SourceFiles="$(DotfuscatedDir)\map.xml" DestinationFiles="$(OutputDir)\$(VersionNumber)\map.xml"/>
-		<Copy Condition="'$(SkipObfuscation)'!='1'" SourceFiles="$(InstallDir)\WinErrorMap.xml" DestinationFiles="$(OutputDir)\$(VersionNumber)\WinErrorMap.xml"/>
+		<Copy Condition="'$(SkipObfuscation)'!='1'" SourceFiles="$(DotfuscatedDir)\map.xml" DestinationFiles="$(DestinationDir)\$(VersionNumber)\map.xml"/>
+		<Copy Condition="'$(SkipObfuscation)'!='1'" SourceFiles="$(InstallDir)\WinErrorMap.xml" DestinationFiles="$(DestinationDir)\$(VersionNumber)\WinErrorMap.xml"/>
 	</Target>
 
 	<Target Name="CleanUpTests" Condition="'$(UnitTestOutputDir)'!='' and '$(SkipUnitTest)'!='1'" >
@@ -179,11 +179,11 @@
 		</CreateItem>
 		<Message Text="UnitTestsResultsFileList=@(UnitTestResultsFileList)"/>
 
-		<RemoveDir Condition="'$(DebugProj)' == ''" Directories="$(OutputDir)\MostRecent\Unit Test Results" ContinueOnError="true"/>
-		<Copy DestinationFolder="$(OutputDir)\MostRecent\Unit Test Results"  SourceFiles="@(UnitTestResultsFileList)"/>
+		<RemoveDir Condition="'$(DebugProj)' == ''" Directories="$(DestinationDir)\MostRecent\Unit Test Results" ContinueOnError="true"/>
+		<Copy DestinationFolder="$(DestinationDir)\MostRecent\Unit Test Results"  SourceFiles="@(UnitTestResultsFileList)"/>
 
-		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).msi" DestinationFiles="$(OutputDir)\MostRecent\$(ProductFileName).msi" />
-		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).exe" DestinationFiles="$(OutputDir)\MostRecent\$(ProductFileName).exe" />
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).msi" DestinationFiles="$(DestinationDir)\MostRecent\$(ProductFileName).msi" />
+		<Copy Condition="'$(SkipEnglish)'!='1'" SourceFiles="$(OutputDir)\$(ProductFileName).exe" DestinationFiles="$(DestinationDir)\MostRecent\$(ProductFileName).exe" />
 
 	</Target>
 </Project>

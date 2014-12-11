@@ -203,7 +203,7 @@ http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
 	</Target>
 
 	<Target Name="ExecuteAllTests" DependsOnTargets="BuildUnitTestList" Condition="'$(SkipUnitTest)'!='1'">
-		<CreateProperty Value="$(BuildDir)\$(VersionNumber)\TestResults">
+		<CreateProperty Value="$(DestinationDir)\$(VersionNumber)\TestResults">
 			<Output TaskParameter="Value" PropertyName="UnitTestOutputDir" />
 		</CreateProperty>
 		<CreateProperty Value="$(UnitTestOutputDir)\">
@@ -233,7 +233,7 @@ http://msdn.microsoft.com/msdnmag/issues/06/03/Bugslayer/default.aspx
     <Message Text="BuildDir: $(BuildDir)" />
     <Message Text="VersionNumber: $(VersionNumber)" />
 
-    <TransformXMLTask XslTransform="$(TestResultsTransform)" Include="$(GeneratedTestResultsFile)" OutputExtension="html" OutputDir="$(BuildDir)\$(VersionNumber)\TestResults"></TransformXMLTask>
+    <TransformXMLTask XslTransform="$(TestResultsTransform)" Include="$(GeneratedTestResultsFile)" OutputExtension="html" OutputDir="$(DestinationDir)\$(VersionNumber)\TestResults"></TransformXMLTask>
 		<VerifyTestsPassedTask TestResultsFile="$(GeneratedTestResultsFile)"></VerifyTestsPassedTask>
 		<SetEnvVarTask Variable="TestResultsFile" Value="$(GeneratedTestResultsFile)"/>
 		<Copy SourceFiles="$(GeneratedTestResultsFile)" DestinationFiles="$(TestResultsOutput)" />
