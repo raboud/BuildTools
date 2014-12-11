@@ -128,6 +128,7 @@
 	</Target>
 
 	<Target Name="SignCode" DependsOnTargets="BuildFilesToSign" Condition="'$(SkipSigning)'!='1'">
+    <Message Text="Skip Signing $SkipSigning" />
 		<SignFile CertificateThumbprint="$(Certificate)" SigningTarget="%(FileToSign.Identity)" TimestampUrl="http://timestamp.verisign.com/scripts/timstamp.dll"/>
 	</Target>
 
