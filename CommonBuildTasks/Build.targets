@@ -48,7 +48,7 @@
 
   <Target Name="BuildVersionNumbers" DependsOnTargets="BuildCommonVersionNumbers">
     <!--Update the version numbers for Product-->
-    <VersionTask AssemblyVersion="$(VersionNumber)" Path="$(SourceDir)" CompanyName="R &amp; R Engineering." Copyright="$(CopyrightText)" ProductName="Installation Manager" Recursive="true"/>
+    <VersionTask AssemblyVersion="$(VersionNumber)" Path="$(SourceDir)" CompanyName="$(CompanyName)" Copyright="$(CopyrightText)" ProductName="Installation Manager" Recursive="true"/>
     <!--Update the version infor for QAInspect-->
   </Target>
 

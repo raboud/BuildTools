@@ -3,8 +3,9 @@
 
 	<PropertyGroup>
 		<!-- Generic Properties -->
-		<CopyrightText Condition="'$(CopyrightText)'==''">Copyright (c) 2012 R &amp; R Engineering, LLC Norcross, GA 30093</CopyrightText>
-		<VersionNumber Condition="'$(VersionNumber)'==''">1.2.3.4</VersionNumber>
+		<CopyrightText Condition="'$(CopyrightText)'==''">Copyright (c) 2001 - 2013 R &amp; R Engineering, LLC Norcross, GA 30093</CopyrightText>
+    <CompanyName Condition="'$(CompanyName)'==''">R &amp; R Engineering, LLC</CompanyName>
+    <VersionNumber Condition="'$(VersionNumber)'==''">1.2.3.4</VersionNumber>
 
 		<!-- Machine Specific Tools -->
     <BuildTools Condition="'$(BuildTools)' == ''">c:\BuildTools</BuildTools>
