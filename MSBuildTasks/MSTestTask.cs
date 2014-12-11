@@ -39,8 +39,8 @@ namespace RandREng.MsBuildTasks
     {
         #region Constants
 
-        const String win32KeyName2005 = @"SOFTWARE\Microsoft\VisualStudio\8.0";
-        const String win64KeyName2005 = @"SOFTWARE\Wow6432Node\Microsoft\VisualStudio\8.0";
+        const String win32KeyName2010 = @"SOFTWARE\Microsoft\VisualStudio\10.0";
+        const String win64KeyName2010 = @"SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0";
         const String win32KeyName2008 = @"SOFTWARE\Microsoft\VisualStudio\9.0";
         const String win64KeyName2008 = @"SOFTWARE\Wow6432Node\Microsoft\VisualStudio\9.0";
         const String installDirValue = @"InstallDir";
@@ -116,8 +116,8 @@ namespace RandREng.MsBuildTasks
         /// </returns>
         protected override string GenerateFullPathToTool ( )
         {
-            string win64KeyName = win64KeyName2005;
-            string win32KeyName = win32KeyName2005;
+            string win64KeyName = win64KeyName2010;
+            string win32KeyName = win32KeyName2010;
 
             if (this.UseTest2008)
             {
