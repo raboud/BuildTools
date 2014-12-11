@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:myObj="urn:Helper"
-xmlns:t="http://microsoft.com/schemas/VisualStudio/TeamTest/2006"				>
+xmlns:t="http://microsoft.com/schemas/VisualStudio/TeamTest/2010"				>
   <xsl:param name="today"></xsl:param>
   <xsl:param name="results"></xsl:param>
   <xsl:param name="pass" select="'Passed'"/>
