@@ -8,8 +8,9 @@ using Exortech.NetReflector;
 using ThoughtWorks.CruiseControl.Core.Util;
 
 using Microsoft.TeamFoundation.VersionControl.Client;
-using Microsoft.TeamFoundation.Client;
 using ThoughtWorks.CruiseControl.Core;
+using Microsoft.TeamFoundation.Client;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace RandREng.CCNet.Plugin
 {
@@ -327,7 +328,7 @@ namespace RandREng.CCNet.Plugin
             {
                 if (null == teamFoundationServer)
                 {
-                    teamFoundationServer = new TfsTeamProjectCollection(new Uri(this.Server), this.Credentials);
+                    teamFoundationServer = new TfsTeamProjectCollection(new Uri(this.Server), this.VssCreds);
                 }
                 return teamFoundationServer;
             }
@@ -336,6 +337,20 @@ namespace RandREng.CCNet.Plugin
         /// <summary>
         ///   Network credentials used to interact with TFS.
         /// </summary>
+		/// 
+		private VssCredentials VssCreds
+		{
+			get
+			{
+				if (null == networkCredential)
+				{
+					networkCredential = new NetworkCredential(Username, Password);
+				}
+				VssBasicCredential basicCred = new VssBasicCredential(networkCredential);
+				VssCredentials tfsCred = new VssCredentials(basicCred);
+				return tfsCred;
+			}
+		}
         private NetworkCredential Credentials
         {
             get
